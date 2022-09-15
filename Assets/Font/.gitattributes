@@ -1,0 +1,2 @@
+SDF.asset filter=lfs diff=lfs merge=lfs -text
+GB2312 filter=lfs diff=lfs merge=lfs -text
