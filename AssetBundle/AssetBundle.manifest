@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 3237694084
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: logineui.bundle
+      Dependencies: {}

@@ -2,36 +2,21 @@
 
 namespace M_Socket
 {
-    public class NetManager: ManagerBase
+    public class NetManager: Singleton<NetManager>
     {
-        public static NetManager Instance = null;
-
-        private void Awake()
-        {
-            Instance = this;
-            Add(0,this);    
-        }
-
-        public override void Execute(int eventCode, object message)
-        {
-            switch (eventCode)
-            {
-                case 0:
-                    client.Send(message as SocketMsg);
-                    break;
-                default:
-                    break;
-            }
-        }
-
+        //客户端连接对象
+        private ClientPeer client = new ClientPeer("127.0.0.1",6666);
+        
         private void Start()
         {
             client.Connect();
         }
-        //客户端连接对象
-        private ClientPeer client = new ClientPeer("127.0.0.1",6666);
-
-
+        
+        public void Execute(object message)
+        {
+            client.Send(message as SocketMsg);
+        }
+        
         private void Update()
         {
             if (client == null) return;

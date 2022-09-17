@@ -8,29 +8,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StarPanle : UIBase
+public class StarPanle : MonoBehaviour
 {
     private Button LogintButton; //登录输入框
     private Button CloseButton;  //关闭面板button
     private TMP_InputField InputFieldUser; //用户名
     private TMP_InputField InputFieldPass; //密码输入框
-
-    private void Awake()
-    {
-        Bind(UIEvent.START_PLAYEL_ACTIVE);
-    }
-
-    public override void Execute(int eventCode, object message)
-    {
-        switch (eventCode)
-        {
-            case UIEvent.START_PLAYEL_ACTIVE:
-                setPanelActive((bool)message);
-                break;
-        }
-        
-    }
-
+    
     private void Start()
     {
         LogintButton = transform.GetChild(0).Find("LogintButton").GetComponent<Button>();
@@ -41,7 +25,6 @@ public class StarPanle : UIBase
         CloseButton = transform.GetChild(0).Find("Exit").GetComponent<Button>();
         LogintButton.onClick.AddListener(LogintClick);
         CloseButton.onClick.AddListener(ColoseButton);
-        setPanelActive(false);
     }
     
     private void LogintClick()
@@ -52,17 +35,15 @@ public class StarPanle : UIBase
         
         AccountDto dto = new AccountDto(InputFieldUser.text, InputFieldPass.text);
         SocketMsg socketMsg = new SocketMsg(OpCode.Account, AccountCode.LOGIN, dto);
-        Dispatch(AreaCode.NET,0,socketMsg);
     }
 
     private void ColoseButton()
     {
-        setPanelActive(false);
+        gameObject.SetActive(false);
     }
 
-    public override void OnDestroy()
+    public  void OnDestroy()
     {
-        base.OnDestroy();
         LogintButton.onClick.RemoveAllListeners();
         CloseButton.onClick.RemoveAllListeners();
     }

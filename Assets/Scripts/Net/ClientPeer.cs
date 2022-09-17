@@ -13,7 +13,7 @@ namespace M_Socket
     /// <summary>
     /// 客户端Socket的封装
     /// </summary>
-    public class ClientPeer
+    public class ClientPeer                     
     {
         private Socket Socket;
         private string ip;

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using Protocol.Code;
 using Protocol.Dto;
 
-public class RegistPanle : UIBase
+public class RegistPanle : MonoBehaviour
 {
     private Button LogintButton; //登录输入框
     private Button CloseButton;  //关闭面板button
@@ -15,23 +15,7 @@ public class RegistPanle : UIBase
     private TMP_InputField InputFieldUser; //用户名
     private TMP_InputField InputFieldPass; //密码输入框
     private TMP_InputField InputRepeat; //再次确认
-
-    private void Awake()
-    {
-        Bind(UIEvent.REGLST_PLAYEL_ACTIVE);
-    }
-
-    public override void Execute(int eventCode, object message)
-    {
-        switch (eventCode)
-        {
-            case UIEvent.REGLST_PLAYEL_ACTIVE:
-                setPanelActive((bool)message);
-                break;
-        }
-        
-    }
-
+    
     private void Start()
     {
         LogintButton = transform.GetChild(0).Find("ReigistButton").GetComponent<Button>();
@@ -44,7 +28,6 @@ public class RegistPanle : UIBase
         CloseButton = transform.GetChild(0).Find("Exit").GetComponent<Button>();
         LogintButton.onClick.AddListener(ReigistClick);
         CloseButton.onClick.AddListener(ColoseButton);
-        setPanelActive(false);
     }
     
     private void ReigistClick()
@@ -59,17 +42,16 @@ public class RegistPanle : UIBase
         Debug.Log("正在注册.............");
         AccountDto dto = new AccountDto(InputFieldUser.text, InputFieldPass.text);
         SocketMsg socketMsg = new SocketMsg(OpCode.Account, AccountCode.REGIST_CREQ, dto);
-        Dispatch(AreaCode.NET,0,socketMsg);
+        NetManager.Instance.Execute(socketMsg);
     }
 
     private void ColoseButton()
     {
-        setPanelActive(false);
+       gameObject.SetActive(false);
     }
 
-    public override void OnDestroy()
+    public  void OnDestroy()
     {
-        base.OnDestroy();
         LogintButton.onClick.RemoveAllListeners();
         CloseButton.onClick.RemoveAllListeners();
     }

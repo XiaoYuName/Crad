@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayPanle : UIBase
+public class PlayPanle : MonoBehaviour
 {
     private Button StartButton;
     private Button registButton;
 
+    private LongineUI _longineUI => transform.parent.GetComponent<LongineUI>();
     private void Start()
     {
         StartButton = transform.Find("StarGame").GetComponent<Button>();
@@ -17,20 +18,19 @@ public class PlayPanle : UIBase
         registButton.onClick.AddListener(RegistClick);
     }
 
-    public override void OnDestroy()
+    public  void OnDestroy()
     {
-        base.OnDestroy();
         StartButton.onClick.RemoveAllListeners();
         registButton.onClick.RemoveAllListeners();
     }
 
     private void StarClick()
     {
-        Dispatch(AreaCode.UI,UIEvent.START_PLAYEL_ACTIVE,true);
+        _longineUI.ShowStarPanel();
     }
 
     private void RegistClick()
     {
-        Dispatch(AreaCode.UI,UIEvent.REGLST_PLAYEL_ACTIVE,true);
+        _longineUI.ShowRegistPanel();
     }
 }
