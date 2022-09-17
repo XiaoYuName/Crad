@@ -2,6 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using Crad.UIManager;
+using Protocol.Code;
+using Protocol.Dto;
+using Protocol.Exception;
 using UnityEngine;
 
 namespace M_Socket
@@ -68,7 +72,7 @@ namespace M_Socket
         /// </summary>
         private void StarReceive()
         {
-            if (Socket == null && Socket.Connected)
+            if (Socket == null && Socket.Connected == false)
             {
 #if UNITY_EDITOR
                 Debug.LogError("没有连接成功,无法发送数据");
@@ -95,6 +99,8 @@ namespace M_Socket
                dataCache.AddRange(tempByteArray);
                if(!isProcessReceive) //如果没有在处理,那么就开始进行处理
                 ProcessReceive();
+               
+               StarReceive();
             }
             catch (Exception e)
             {
@@ -118,8 +124,73 @@ namespace M_Socket
             }
 
             SocketMsg msg = EncodeTool.DecodeMsg(data);
+            Loom.Initialize();
             //存储数据等待处理
             SocketMsgQueue.Enqueue(msg);
+            switch (msg.OpCode)
+            {
+                case OpCode.Account:
+                    AccountException exception = (AccountException)msg.value;
+                    switch (exception)
+                    {
+                        case AccountException.AccountExist:
+                            Loom.QueueOnMainThread(b =>
+                            {
+                                DialogManager.Instance.OpDialog("注册","账号已存在","确定");
+                            },null);
+                            
+                            break;
+                        case AccountException.AccountisNull:
+                            Loom.QueueOnMainThread(b =>
+                            {
+                                DialogManager.Instance.OpDialog("注册","账号为空","确定");
+                            },null);
+                            
+                            break;
+                        case AccountException.AccountPasswordNull:
+                            Loom.QueueOnMainThread(b =>
+                            {
+                                DialogManager.Instance.OpDialog("注册","密码不合法","确定");
+                            },null);
+                            break;
+                        case AccountException.Regist:
+                            Loom.QueueOnMainThread(b =>
+                            {
+                                DialogManager.Instance.OpDialog("注册","注册成功","确定");
+                            },null);
+                            
+                            break;
+                        case AccountException.LoginExist:
+                            Loom.QueueOnMainThread(a =>
+                            {
+                                DialogManager.Instance.OpDialog("登录","没有该账号","确定");
+                            }, null);
+                            
+                            break;
+                        case AccountException.LoginOnline:
+                            Loom.QueueOnMainThread(b =>
+                            {
+                                DialogManager.Instance.OpDialog("登录","该账号已在登录中","确定");
+                            },null);
+                            
+                            break;
+                        case AccountException.LoginMatch:
+                            Loom.QueueOnMainThread(b =>
+                            {
+                                DialogManager.Instance.OpDialog("登录","账号密码不匹配","确定");
+                            },null);
+                            
+                            break;
+                        case AccountException.Login:
+                            Loom.QueueOnMainThread(b =>
+                            {
+                                DialogManager.Instance.OpDialog("登录成功","登录成功","确定");
+                            },null);
+                            break;
+                    }
+                    break;
+            }
+            
             ProcessReceive();
         }
 

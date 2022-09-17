@@ -104,7 +104,7 @@ namespace M_Socket
         /// <returns></returns>
         public static SocketMsg DecodeMsg(byte[] data)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream(data))
             {
                 using (BinaryReader br = new BinaryReader(ms))
                 {
